@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react"
 import { useSlides } from "@/hooks/use-slides"
 import { useFullscreen } from "@/hooks/use-fullscreen"
+import { useCanvasTools } from "@/hooks/use-canvas-tools"
 import { SlideHeader } from "@/components/slide-header"
 import { SlideToolbar } from "@/components/slide-toolbar"
 import { SlideSidebar } from "@/components/slide-sidebar"
-import { SlideViewer } from "@/components/slide-viewer"
+import { CanvasSlideViewer } from "@/components/canvas-slide-viewer"
 import { SlideControls } from "@/components/slide-controls"
-import { FullscreenSlideshow } from "@/components/fullscreen-slideshow"
+import { CanvasFullscreenSlideshow } from "@/components/canvas-fullscreen-slideshow"
 
 export default function GoogleSlidesClone() {
   const [title, setTitle] = useState("v0 Exec Summit NYC")
@@ -17,6 +18,8 @@ export default function GoogleSlidesClone() {
   const { slides, currentSlide, setCurrentSlide, nextSlide, prevSlide, addSlide, getCurrentSlide } = useSlides()
 
   const { isFullscreen, isTransitioning, showSlide, fullscreenRef, startSlideshow, endSlideshow } = useFullscreen()
+
+  const { tool, zoom, changeTool, changeZoom, resetZoom } = useCanvasTools()
 
   // Keyboard navigation
   useEffect(() => {
@@ -84,7 +87,12 @@ export default function GoogleSlidesClone() {
 
         {/* Main Content */}
         <div className="flex-1 bg-gray-200 flex flex-col">
-          <SlideViewer slide={getCurrentSlide()} />
+          <CanvasSlideViewer 
+            slide={getCurrentSlide()} 
+            tool={tool}
+            onToolChange={changeTool}
+            zoom={zoom}
+          />
 
           {/* Bottom Controls */}
           <SlideControls
@@ -93,17 +101,23 @@ export default function GoogleSlidesClone() {
             onPrevSlide={prevSlide}
             onNextSlide={nextSlide}
             onSlideChange={setCurrentSlide}
+            tool={tool}
+            onToolChange={changeTool}
+            zoom={zoom}
+            onZoomChange={changeZoom}
           />
         </div>
       </div>
 
       {/* Fullscreen Slideshow */}
-      <FullscreenSlideshow
+      <CanvasFullscreenSlideshow
         slide={getCurrentSlide()}
         isVisible={isFullscreen || isTransitioning}
         showSlide={showSlide}
         fullscreenRef={fullscreenRef}
         onNextSlide={nextSlide}
+        tool={tool}
+        onToolChange={changeTool}
       />
     </div>
   )
