@@ -13,6 +13,9 @@ import { FullscreenSlideshow } from "@/components/fullscreen-slideshow"
 export default function GoogleSlidesClone() {
   const [title, setTitle] = useState("v0 Exec Summit NYC")
   const [showHeader, setShowHeader] = useState(true)
+  const [zoomPercent, setZoomPercent] = useState<number>(100)
+  const [panOffset, setPanOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
+  const [toolMode, setToolMode] = useState<"pointer" | "pan">("pointer")
 
   const { slides, currentSlide, setCurrentSlide, nextSlide, prevSlide, addSlide, getCurrentSlide } = useSlides()
 
@@ -84,7 +87,14 @@ export default function GoogleSlidesClone() {
 
         {/* Main Content */}
         <div className="flex-1 bg-gray-200 flex flex-col">
-          <SlideViewer slide={getCurrentSlide()} />
+          <SlideViewer
+            slide={getCurrentSlide()}
+            zoomPercent={zoomPercent}
+            panOffset={panOffset}
+            onPanOffsetChange={setPanOffset}
+            onZoomChange={setZoomPercent}
+            toolMode={toolMode}
+          />
 
           {/* Bottom Controls */}
           <SlideControls
@@ -93,6 +103,12 @@ export default function GoogleSlidesClone() {
             onPrevSlide={prevSlide}
             onNextSlide={nextSlide}
             onSlideChange={setCurrentSlide}
+            zoomPercent={zoomPercent}
+            onZoomChange={(z) => {
+              setZoomPercent(z)
+            }}
+            toolMode={toolMode}
+            onToolModeChange={(m) => setToolMode(m)}
           />
         </div>
       </div>
